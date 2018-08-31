@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/index.tsx',
@@ -6,33 +7,37 @@ module.exports = {
     devtool: 'inline-source-map',
     output: {
         path: path.resolve(__dirname, 'build'),
-        publicPath: "/build/",
+        publicPath: "/",
         filename: 'bundle.js',
     },
     devServer: {
-        contentBase: '.'
+        contentBase: path.resolve(__dirname, 'public')
     },
     module: {
         rules: [{
             test: /\.html$/,
             loader: 'raw-loader'
         },
-        {
-            test: /\.css$/,
-            loader: 'raw-loader'
-        },
-        {
-            test: /\.tsx?$/,
-            loader: "ts-loader",
-            exclude: /node_modules/
-          }
-    ],
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+                exclude: /node_modules/
+            },
+            {
+                test: /\.scss$/,
+                use: [
+                    "raw-loader",
+                    "sass-loader"
+                ]
+            },
+        ],
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ]
+        extensions: ['.tsx', '.ts', '.js']
     },
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM"
-    }
+    plugins: [
+        new CopyWebpackPlugin([
+            {from: './public', to: '.'},
+        ])
+    ],
 };
