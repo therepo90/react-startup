@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractCssChunks = require("extract-css-chunks-webpack-plugin");
 
 module.exports = {
     entry: './src/index.tsx',
@@ -26,7 +27,8 @@ module.exports = {
             {
                 test: /\.scss$/,
                 use: [
-                    "raw-loader",
+                    ExtractCssChunks.loader,
+                    "css-loader",
                     "sass-loader"
                 ]
             },
@@ -38,6 +40,13 @@ module.exports = {
     plugins: [
         new CopyWebpackPlugin([
             {from: './public', to: '.'},
-        ])
+        ]),
+        new ExtractCssChunks(
+            {
+                filename: "[name].css",
+                chunkFilename: "[id].css",
+                hot: true
+            }
+        ),
     ],
 };
